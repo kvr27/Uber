@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "uberadfdecmde"
+		},
+		"ADF2ADLS_ls_accountKey": {
+			"value": ""
+		},
+		"ADLS2ADF_ls_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"Blob2ADF_ls_connectionString": {
+			"value": ""
+		},
+		"Cosmodb2ADF_ls_connectionString": {
+			"value": ""
+		},
+		"Cosmodb2ADF_ls_account": {
+			"value": "ubercosmodb"
+		},
+		"ADF2ADLS_ls_properties_typeProperties_url": {
+			"value": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"ADLS2ADF_ls_properties_typeProperties_url": {
+			"value": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "sql-servermde2026.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "uber_db"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "Venky"
+		},
+		"Cosmodb2ADF_ls_properties_typeProperties_database": {
+			"value": "Driver"
+		}
+	}
+}

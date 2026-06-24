@@ -1,0 +1,824 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "uberadfdecmde"
+		},
+		"ADF2ADLS_ls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADF2ADLS_ls'"
+		},
+		"ADLS2ADF_ls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS2ADF_ls'"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"Blob2ADF_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Blob2ADF_ls'"
+		},
+		"Cosmodb2ADF_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Cosmodb2ADF_ls'"
+		},
+		"Cosmodb2ADF_ls_account": {
+			"type": "secureString",
+			"metadata": "Secure string for 'account' of 'Cosmodb2ADF_ls'",
+			"defaultValue": "ubercosmodb"
+		},
+		"ADF2ADLS_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"ADLS2ADF_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sql-servermde2026.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "uber_db"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Venky"
+		},
+		"Cosmodb2ADF_ls_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Driver"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADF2ADLS_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This links helps to push files from ADF2ADLS",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ADF2ADLS_ls_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADF2ADLS_ls_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS2ADF_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is link is helped to get data from ADLS2ADF",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ADLS2ADF_ls_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADLS2ADF_ls_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Blob2ADF_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is the link which helps to get files from Blob2ADF",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('Blob2ADF_ls_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Cosmodb2ADF_ls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This link is used to get data from cosmodb2ADF",
+				"annotations": [],
+				"type": "CosmosDbMongoDbApi",
+				"typeProperties": {
+					"connectionString": "[parameters('Cosmodb2ADF_ls_connectionString')]",
+					"account": {
+						"type": "SecureString",
+						"value": "[parameters('Cosmodb2ADF_ls_account')]"
+					},
+					"database": "[parameters('Cosmodb2ADF_ls_properties_typeProperties_database')]",
+					"isServerVersionAbove32": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobRawfils')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Blob2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "uberrawcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "location_id",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "latitude",
+						"type": "String"
+					},
+					{
+						"name": "longitude",
+						"type": "String"
+					},
+					{
+						"name": "description",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Blob2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Blob_B_Files')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Driver')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Driver_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "created_at",
+						"type": "String"
+					},
+					{
+						"name": "driver_id",
+						"type": "String"
+					},
+					{
+						"name": "rating",
+						"type": "String"
+					},
+					{
+						"name": "status",
+						"type": "String"
+					},
+					{
+						"name": "updated_at",
+						"type": "String"
+					},
+					{
+						"name": "user_id",
+						"type": "String"
+					},
+					{
+						"name": "vehicle_id",
+						"type": "String"
+					},
+					{
+						"name": "rating_category",
+						"type": "String"
+					},
+					{
+						"name": "driver_experience_days",
+						"type": "String"
+					},
+					{
+						"name": "is_active",
+						"type": "String"
+					},
+					{
+						"name": "days_since_update",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Driver_B')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Drivers_B.json",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Driver_BB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Drivers_B.json",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"_id": {
+							"type": "object",
+							"properties": {
+								"$oid": {
+									"type": "string"
+								}
+							}
+						},
+						"driver_id": {
+							"type": "string"
+						},
+						"user_id": {
+							"type": "string"
+						},
+						"vehicle_id": {
+							"type": "string"
+						},
+						"license_number": {
+							"type": "string"
+						},
+						"rating": {
+							"type": "number"
+						},
+						"status": {
+							"type": "string"
+						},
+						"created_at": {
+							"type": "string"
+						},
+						"updated_at": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Driver_R')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Cosmodb2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbMongoDbApiCollection",
+				"schema": [],
+				"typeProperties": {
+					"collection": "driverdata"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Cosmodb2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Drivers_S')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Driver_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Location_BB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Location.csv",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "location_id",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "latitude",
+						"type": "String"
+					},
+					{
+						"name": "longitude",
+						"type": "String"
+					},
+					{
+						"name": "description",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Location_S')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Location_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Rides')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Ride_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ride_id",
+						"type": "String"
+					},
+					{
+						"name": "user_id",
+						"type": "String"
+					},
+					{
+						"name": "driver_id",
+						"type": "String"
+					},
+					{
+						"name": "pickup_location",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_location",
+						"type": "String"
+					},
+					{
+						"name": "pickup_lat",
+						"type": "String"
+					},
+					{
+						"name": "pickup_long",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_lat",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_long",
+						"type": "String"
+					},
+					{
+						"name": "distance_km",
+						"type": "String"
+					},
+					{
+						"name": "ride_start_time",
+						"type": "String"
+					},
+					{
+						"name": "ride_end_time",
+						"type": "String"
+					},
+					{
+						"name": "Fare",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "ride_duration_min",
+						"type": "String"
+					},
+					{
+						"name": "uber_fare",
+						"type": "String"
+					},
+					{
+						"name": "driver_fare",
+						"type": "String"
+					},
+					{
+						"name": "fare_per_km",
+						"type": "String"
+					},
+					{
+						"name": "ride_shift",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Rides_BB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Rides.csv",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ride_id",
+						"type": "String"
+					},
+					{
+						"name": "user_id",
+						"type": "String"
+					},
+					{
+						"name": "driver_id",
+						"type": "String"
+					},
+					{
+						"name": "pickup_location",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_location",
+						"type": "String"
+					},
+					{
+						"name": "pickup_lat",
+						"type": "String"
+					},
+					{
+						"name": "pickup_long",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_lat",
+						"type": "String"
+					},
+					{
+						"name": "dropoff_long",
+						"type": "String"
+					},
+					{
+						"name": "distance (km)",
+						"type": "String"
+					},
+					{
+						"name": "ride_start_time",
+						"type": "String"
+					},
+					{
+						"name": "ride_end_time",
+						"type": "String"
+					},
+					{
+						"name": "Fare",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Rides_S')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Rides_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/User_S')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "User_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Vehicle_BB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS2ADF_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Xml",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Vehicle.xml",
+						"folderPath": "Medallian/Bronze",
+						"fileSystem": "ubersgcontainer"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS2ADF_ls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Vehicle_S')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADF2ADLS_ls",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Vehicle_S.csv",
+						"folderPath": "Medallian/Silver",
+						"fileSystem": "ubersgcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADF2ADLS_ls')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,147 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "uberadfdecmde"
+		},
+		"ADF2ADLS_ls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADF2ADLS_ls'"
+		},
+		"ADLS2ADF_ls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS2ADF_ls'"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"Blob2ADF_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Blob2ADF_ls'"
+		},
+		"Cosmodb2ADF_ls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Cosmodb2ADF_ls'"
+		},
+		"Cosmodb2ADF_ls_account": {
+			"type": "secureString",
+			"metadata": "Secure string for 'account' of 'Cosmodb2ADF_ls'",
+			"defaultValue": "ubercosmodb"
+		},
+		"ADF2ADLS_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"ADLS2ADF_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://uberadlssg.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sql-servermde2026.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "uber_db"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Venky"
+		},
+		"Cosmodb2ADF_ls_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Driver"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "uberadfdecmde_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ADF2ADLS_ls_accountKey": {
+						"value": "[parameters('ADF2ADLS_ls_accountKey')]"
+					},
+					"ADLS2ADF_ls_accountKey": {
+						"value": "[parameters('ADLS2ADF_ls_accountKey')]"
+					},
+					"AzureSqlDatabase1_password": {
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					},
+					"Blob2ADF_ls_connectionString": {
+						"value": "[parameters('Blob2ADF_ls_connectionString')]"
+					},
+					"Cosmodb2ADF_ls_connectionString": {
+						"value": "[parameters('Cosmodb2ADF_ls_connectionString')]"
+					},
+					"Cosmodb2ADF_ls_account": {
+						"value": "[parameters('Cosmodb2ADF_ls_account')]"
+					},
+					"ADF2ADLS_ls_properties_typeProperties_url": {
+						"value": "[parameters('ADF2ADLS_ls_properties_typeProperties_url')]"
+					},
+					"ADLS2ADF_ls_properties_typeProperties_url": {
+						"value": "[parameters('ADLS2ADF_ls_properties_typeProperties_url')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"Cosmodb2ADF_ls_properties_typeProperties_database": {
+						"value": "[parameters('Cosmodb2ADF_ls_properties_typeProperties_database')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "uberadfdecmde_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'uberadfdecmde_ArmTemplate_0')]"
+			]
+		}
+	]
+}
