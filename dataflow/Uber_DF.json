@@ -51,10 +51,10 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "uber_df",
+						"referenceName": "Uber_G",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "SQLdbSink"
 				},
 				{
 					"dataset": {
@@ -313,13 +313,17 @@
 				"     broadcast: 'auto')~> druvpldldf",
 				"druvpldldf sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     filePattern:'Uber_G.csv',",
-				"     umask: 0777,",
-				"     preCommands: [],",
-				"     postCommands: [],",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     partitionBy('hash', 1),",
+				"     preCommands: [],",
+				"     postCommands: []) ~> SQLdbSink",
 				"druvpldldf sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     filePattern:'Uber_G',",
