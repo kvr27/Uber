@@ -1,0 +1,94 @@
+{
+	"name": "vehicle",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS2ADF_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Vechicle_S.csv",
+				"folderPath": "Medallian/Silver",
+				"fileSystem": "ubersgcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Fitness_Certificate_Expiry",
+				"type": "String"
+			},
+			{
+				"name": "Fuel_Type",
+				"type": "String"
+			},
+			{
+				"name": "GPS_Enabled",
+				"type": "String"
+			},
+			{
+				"name": "Insurance_Expiry_Date",
+				"type": "String"
+			},
+			{
+				"name": "Registration_Date",
+				"type": "String"
+			},
+			{
+				"name": "capacity",
+				"type": "String"
+			},
+			{
+				"name": "color",
+				"type": "String"
+			},
+			{
+				"name": "driver_id",
+				"type": "String"
+			},
+			{
+				"name": "model",
+				"type": "String"
+			},
+			{
+				"name": "vehicle_id",
+				"type": "String"
+			},
+			{
+				"name": "vehicle_num",
+				"type": "String"
+			},
+			{
+				"name": "vehicle_type",
+				"type": "String"
+			},
+			{
+				"name": "vehicle_age_years",
+				"type": "String"
+			},
+			{
+				"name": "insurance_status",
+				"type": "String"
+			},
+			{
+				"name": "insurance_days_remaining",
+				"type": "String"
+			},
+			{
+				"name": "fitness_status",
+				"type": "String"
+			},
+			{
+				"name": "vehicle_age_group",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

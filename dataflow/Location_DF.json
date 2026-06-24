@@ -1,0 +1,50 @@
+{
+	"name": "Location_DF",
+	"properties": {
+		"description": "This dataflow will include all transformation on Lactation File",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Location_BB",
+						"type": "DatasetReference"
+					},
+					"name": "Location"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Location_S",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          location_id as string,",
+				"          location as string,",
+				"          latitude as string,",
+				"          longitude as string,",
+				"          description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> Location",
+				"Location sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'Location_S.csv',",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

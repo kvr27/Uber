@@ -1,0 +1,35 @@
+{
+	"name": "S2G_PL",
+	"properties": {
+		"description": "This will give final denormalized data",
+		"activities": [
+			{
+				"name": "Uber_Final_data",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Uber_DF",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-06-24T10:17:20Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

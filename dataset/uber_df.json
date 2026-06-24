@@ -1,0 +1,25 @@
+{
+	"name": "uber_df",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADF2ADLS_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Uber_G",
+				"folderPath": "Medallian/Gold",
+				"fileSystem": "ubersgcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

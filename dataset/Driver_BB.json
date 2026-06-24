@@ -1,0 +1,57 @@
+{
+	"name": "Driver_BB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS2ADF_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Drivers_B.json",
+				"folderPath": "Medallian/Bronze",
+				"fileSystem": "ubersgcontainer"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "object",
+					"properties": {
+						"$oid": {
+							"type": "string"
+						}
+					}
+				},
+				"driver_id": {
+					"type": "string"
+				},
+				"user_id": {
+					"type": "string"
+				},
+				"vehicle_id": {
+					"type": "string"
+				},
+				"license_number": {
+					"type": "string"
+				},
+				"rating": {
+					"type": "number"
+				},
+				"status": {
+					"type": "string"
+				},
+				"created_at": {
+					"type": "string"
+				},
+				"updated_at": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,102 @@
+{
+	"name": "Rides",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS2ADF_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Ride_S.csv",
+				"folderPath": "Medallian/Silver",
+				"fileSystem": "ubersgcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ride_id",
+				"type": "String"
+			},
+			{
+				"name": "user_id",
+				"type": "String"
+			},
+			{
+				"name": "driver_id",
+				"type": "String"
+			},
+			{
+				"name": "pickup_location",
+				"type": "String"
+			},
+			{
+				"name": "dropoff_location",
+				"type": "String"
+			},
+			{
+				"name": "pickup_lat",
+				"type": "String"
+			},
+			{
+				"name": "pickup_long",
+				"type": "String"
+			},
+			{
+				"name": "dropoff_lat",
+				"type": "String"
+			},
+			{
+				"name": "dropoff_long",
+				"type": "String"
+			},
+			{
+				"name": "distance_km",
+				"type": "String"
+			},
+			{
+				"name": "ride_start_time",
+				"type": "String"
+			},
+			{
+				"name": "ride_end_time",
+				"type": "String"
+			},
+			{
+				"name": "Fare",
+				"type": "String"
+			},
+			{
+				"name": "Status",
+				"type": "String"
+			},
+			{
+				"name": "ride_duration_min",
+				"type": "String"
+			},
+			{
+				"name": "uber_fare",
+				"type": "String"
+			},
+			{
+				"name": "driver_fare",
+				"type": "String"
+			},
+			{
+				"name": "fare_per_km",
+				"type": "String"
+			},
+			{
+				"name": "ride_shift",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

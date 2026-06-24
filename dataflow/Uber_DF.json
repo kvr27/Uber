@@ -1,0 +1,319 @@
+{
+	"name": "Uber_DF",
+	"properties": {
+		"description": "This is final DF",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Driver",
+						"type": "DatasetReference"
+					},
+					"name": "Driver"
+				},
+				{
+					"dataset": {
+						"referenceName": "Rides",
+						"type": "DatasetReference"
+					},
+					"name": "Rides"
+				},
+				{
+					"dataset": {
+						"referenceName": "user",
+						"type": "DatasetReference"
+					},
+					"name": "user"
+				},
+				{
+					"dataset": {
+						"referenceName": "vehicle",
+						"type": "DatasetReference"
+					},
+					"name": "vehicle"
+				},
+				{
+					"dataset": {
+						"referenceName": "location",
+						"type": "DatasetReference"
+					},
+					"name": "locationdf"
+				},
+				{
+					"dataset": {
+						"referenceName": "dropofflaction",
+						"type": "DatasetReference"
+					},
+					"name": "locationdf2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "uber_df",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "driverselectedcols"
+				},
+				{
+					"name": "ridesselectedcols"
+				},
+				{
+					"name": "drdf"
+				},
+				{
+					"name": "userselectedcols"
+				},
+				{
+					"name": "drudf"
+				},
+				{
+					"name": "vehicleselectedcols"
+				},
+				{
+					"name": "druvdf"
+				},
+				{
+					"name": "pickuplactiondf"
+				},
+				{
+					"name": "druvpldf"
+				},
+				{
+					"name": "dropofflaction"
+				},
+				{
+					"name": "druvpldldf"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          created_at as string,",
+				"          driver_id as string,",
+				"          rating as string,",
+				"          status as string,",
+				"          updated_at as string,",
+				"          user_id as string,",
+				"          vehicle_id as string,",
+				"          rating_category as string,",
+				"          driver_experience_days as string,",
+				"          is_active as string,",
+				"          days_since_update as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Driver",
+				"source(output(",
+				"          ride_id as string,",
+				"          user_id as string,",
+				"          driver_id as string,",
+				"          pickup_location as string,",
+				"          dropoff_location as string,",
+				"          pickup_lat as string,",
+				"          pickup_long as string,",
+				"          dropoff_lat as string,",
+				"          dropoff_long as string,",
+				"          distance_km as string,",
+				"          ride_start_time as string,",
+				"          ride_end_time as string,",
+				"          Fare as string,",
+				"          Status as string,",
+				"          ride_duration_min as string,",
+				"          uber_fare as string,",
+				"          driver_fare as string,",
+				"          fare_per_km as string,",
+				"          ride_shift as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Rides",
+				"source(output(",
+				"          user_id as string,",
+				"          name as string,",
+				"          email as string,",
+				"          phone_number as string,",
+				"          password_hash as string,",
+				"          profile_picture as string,",
+				"          user_type as string,",
+				"          created_at as string,",
+				"          updated_at as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> user",
+				"source(output(",
+				"          Fitness_Certificate_Expiry as string,",
+				"          Fuel_Type as string,",
+				"          GPS_Enabled as string,",
+				"          Insurance_Expiry_Date as string,",
+				"          Registration_Date as string,",
+				"          capacity as string,",
+				"          color as string,",
+				"          driver_id as string,",
+				"          model as string,",
+				"          vehicle_id as string,",
+				"          vehicle_num as string,",
+				"          vehicle_type as string,",
+				"          vehicle_age_years as string,",
+				"          insurance_status as string,",
+				"          insurance_days_remaining as string,",
+				"          fitness_status as string,",
+				"          vehicle_age_group as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> vehicle",
+				"source(output(",
+				"          location_id as string,",
+				"          location as string,",
+				"          latitude as string,",
+				"          longitude as string,",
+				"          description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> locationdf",
+				"source(output(",
+				"          location_id as string,",
+				"          location as string,",
+				"          latitude as string,",
+				"          longitude as string,",
+				"          description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> locationdf2",
+				"Driver select(mapColumn(",
+				"          created_at,",
+				"          driver_id,",
+				"          rating,",
+				"          driver_status = status,",
+				"          updated_at,",
+				"          driver_user_id = user_id,",
+				"          vehicle_id,",
+				"          rating_category,",
+				"          driver_experience_days,",
+				"          is_active,",
+				"          days_since_update",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> driverselectedcols",
+				"Rides select(mapColumn(",
+				"          ride_id,",
+				"          rideer_user_id = user_id,",
+				"          driver_id,",
+				"          pickup_location,",
+				"          dropoff_location,",
+				"          pickup_lat,",
+				"          pickup_long,",
+				"          dropoff_lat,",
+				"          dropoff_long,",
+				"          distance_km,",
+				"          ride_start_time,",
+				"          ride_end_time,",
+				"          Fare,",
+				"          rider_Status = Status,",
+				"          ride_duration_min,",
+				"          uber_fare,",
+				"          driver_fare,",
+				"          fare_per_km,",
+				"          ride_shift",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ridesselectedcols",
+				"driverselectedcols, ridesselectedcols join(driverselectedcols@driver_id == ridesselectedcols@driver_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> drdf",
+				"user select(mapColumn(",
+				"          user_id,",
+				"          name,",
+				"          email,",
+				"          phone_number,",
+				"          password_hash,",
+				"          profile_picture,",
+				"          user_type,",
+				"          user_created_at = created_at,",
+				"          user_updated_at = updated_at",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> userselectedcols",
+				"drdf, userselectedcols join(driver_user_id == user_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> drudf",
+				"vehicle select(mapColumn(",
+				"          Fitness_Certificate_Expiry,",
+				"          Fuel_Type,",
+				"          GPS_Enabled,",
+				"          Insurance_Expiry_Date,",
+				"          Registration_Date,",
+				"          capacity,",
+				"          color,",
+				"          driver_id,",
+				"          model,",
+				"          vehicle_id,",
+				"          vehicle_num,",
+				"          vehicle_type,",
+				"          vehicle_age_years,",
+				"          insurance_status,",
+				"          insurance_days_remaining,",
+				"          fitness_status,",
+				"          vehicle_age_group",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> vehicleselectedcols",
+				"drudf, vehicleselectedcols join(driverselectedcols@vehicle_id == vehicleselectedcols@vehicle_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> druvdf",
+				"locationdf select(mapColumn(",
+				"          pickup_location_id = location_id,",
+				"          pickup_location_name = location,",
+				"          pickup_master_latitude = latitude,",
+				"          pickup_master_longitude = longitude,",
+				"          pickup_description = description",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> pickuplactiondf",
+				"druvdf, pickuplactiondf join(pickup_location == pickup_location_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> druvpldf",
+				"locationdf2 select(mapColumn(",
+				"          dropoff_location_id = location_id,",
+				"          dropoff_location_name = location,",
+				"          dropoff_master_latitude = latitude,",
+				"          dropoff_master_longitude = longitude,",
+				"          dropoff_description = description",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> dropofflaction",
+				"druvpldf, dropofflaction join(dropoff_location == dropoff_location_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> druvpldldf",
+				"druvpldldf sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'Uber_G.csv',",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

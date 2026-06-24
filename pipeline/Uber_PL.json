@@ -1,0 +1,73 @@
+{
+	"name": "Uber_PL",
+	"properties": {
+		"description": "This PL will combine all PL at one place",
+		"activities": [
+			{
+				"name": "R2B_PL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "R2B_PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "B2S_PL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "R2B_PL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "B2S_pl",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "S2G_PL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "B2S_PL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "S2G_PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-06-24T10:22:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

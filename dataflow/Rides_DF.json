@@ -1,0 +1,115 @@
+{
+	"name": "Rides_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Rides_BB",
+						"type": "DatasetReference"
+					},
+					"name": "Rides"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Rides_S",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedCols"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "drivriedcols"
+				},
+				{
+					"name": "morederivedcols"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ride_id as string,",
+				"          user_id as string,",
+				"          driver_id as string,",
+				"          pickup_location as string,",
+				"          dropoff_location as string,",
+				"          pickup_lat as string,",
+				"          pickup_long as string,",
+				"          dropoff_lat as string,",
+				"          dropoff_long as string,",
+				"          {distance (km)} as string,",
+				"          ride_start_time as string,",
+				"          ride_end_time as string,",
+				"          Fare as string,",
+				"          Status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Rides",
+				"select1 derive(ride_start_time = toTimestamp(ride_start_time,'dd-MM-yyyy HH:mm'),",
+				"          ride_end_time = toTimestamp(ride_end_time,'dd-MM-yyyy HH:mm'),",
+				"          distance_km = round(toDouble(distance_km), 2),",
+				"          Fare = round(toDouble(Fare), 2)) ~> derivedCols",
+				"Rides select(mapColumn(",
+				"          ride_id,",
+				"          user_id,",
+				"          driver_id,",
+				"          pickup_location,",
+				"          dropoff_location,",
+				"          pickup_lat,",
+				"          pickup_long,",
+				"          dropoff_lat,",
+				"          dropoff_long,",
+				"          distance_km = {distance (km)},",
+				"          ride_start_time,",
+				"          ride_end_time,",
+				"          Fare,",
+				"          Status",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedCols derive(Status = iif(isNull(Status),'Cancelled', Status),",
+				"          each(match(type=='timestamp'), $$ = iif(isNull($$), toTimestamp('1900-01-01 00:00:00'), $$)),",
+				"          each(match(type=='double'||type=='integer'||type=='long'), $$ = iif(isNull($$), toDouble(0), $$)),",
+				"          each(match(type=='string'&&name!='Status'), $$ = iif(isNull($$) || trim($$) == '', 'NA', $$)),",
+				"     partitionBy('hash', 1)) ~> drivriedcols",
+				"drivriedcols derive(ride_duration_min = round((toLong(ride_end_time) - toLong(ride_start_time)) / 60000.0, 2),",
+				"          uber_fare = round(Fare * 0.20,2),",
+				"          driver_fare = round(Fare * 0.80,2),",
+				"          fare_per_km = round(Fare / distance_km, 2),",
+				"          ride_start_time = toString(ride_start_time,'EEEE'),",
+				"          ride_shift = iif(\r",
+				"    hour(ride_start_time) >= 5 && hour(ride_start_time) < 12,\r",
+				"    'Morning',\r",
+				"    iif(\r",
+				"        hour(ride_start_time) >= 12 && hour(ride_start_time) < 17,\r",
+				"        'Afternoon',\r",
+				"        iif(\r",
+				"            hour(ride_start_time) >= 17 && hour(ride_start_time) < 21,\r",
+				"            'Evening',\r",
+				"            'Late Night'\r",
+				"        )\r",
+				"    )\r",
+				")) ~> morederivedcols",
+				"morederivedcols sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'Ride_S.csv',",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

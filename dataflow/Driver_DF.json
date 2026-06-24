@@ -1,0 +1,80 @@
+{
+	"name": "Driver_DF",
+	"properties": {
+		"description": "This DF will perform all transformation on Driver  ",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Driver_BB",
+						"type": "DatasetReference"
+					},
+					"name": "driver"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Drivers_S",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectedcols"
+				},
+				{
+					"name": "derivedCols"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {_id} as ({$oid} as string),",
+				"          created_at as date,",
+				"          driver_id as string,",
+				"          license_number as string,",
+				"          rating as double,",
+				"          status as string,",
+				"          updated_at as date,",
+				"          user_id as string,",
+				"          vehicle_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> driver",
+				"driver select(mapColumn(",
+				"          created_at,",
+				"          driver_id = license_number,",
+				"          license_number,",
+				"          rating,",
+				"          status,",
+				"          updated_at,",
+				"          user_id,",
+				"          vehicle_id",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectedcols",
+				"selectedcols derive(rating_category = iif(rating >= 4.5, 'Excellent',\r",
+				"    iif(rating >= 3.5, 'Good',\r",
+				"        iif(rating >= 2.5, 'Average', 'Poor'))),",
+				"          driver_experience_days = toInteger(currentDate() - created_at),",
+				"          is_active = iif(status==\"active\",1,0),",
+				"          days_since_update = toInteger(currentDate()- updated_at)) ~> derivedCols",
+				"derivedCols sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'Driver_S.csv',",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

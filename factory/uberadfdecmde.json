@@ -1,0 +1,15 @@
+{
+	"name": "uberadfdecmde",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8b3ef33a-ca4b-4dfc-8021-3cd1a77ab6c1",
+		"tenantId": "acf0849b-e6e5-4f43-953c-5f611a50426a"
+	}
+}

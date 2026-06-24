@@ -1,0 +1,21 @@
+{
+	"name": "Driver_B",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADF2ADLS_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Drivers_B.json",
+				"folderPath": "Medallian/Bronze",
+				"fileSystem": "ubersgcontainer"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

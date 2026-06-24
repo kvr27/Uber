@@ -1,0 +1,60 @@
+{
+	"name": "user_BB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS2ADF_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "User.xlsx",
+				"folderPath": "Medallian/Bronze",
+				"fileSystem": "ubersgcontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "user_id",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "email",
+				"type": "String"
+			},
+			{
+				"name": "phone_number",
+				"type": "String"
+			},
+			{
+				"name": "password_hash",
+				"type": "String"
+			},
+			{
+				"name": "profile_picture",
+				"type": "String"
+			},
+			{
+				"name": "user_type",
+				"type": "String"
+			},
+			{
+				"name": "created_at",
+				"type": "String"
+			},
+			{
+				"name": "updated_at",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

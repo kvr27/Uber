@@ -1,0 +1,97 @@
+{
+	"name": "Vehicle_DF",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Vehicle_BB",
+						"type": "DatasetReference"
+					},
+					"name": "Vehicle"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Vehicle_S",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Vehicleflatten"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          root as (row as (Fitness_Certificate_Expiry as date, Fuel_Type as string, GPS_Enabled as boolean, Insurance_Expiry_Date as date, Registration_Date as date, capacity as short, color as string, driver_id as string, model as string, vehicle_id as string, vehicle_num as string, vehicle_type as string)[])",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     validationMode: 'none',",
+				"     namespaces: true,",
+				"     partitionBy('hash', 1)) ~> Vehicle",
+				"Vehicle foldDown(unroll(root.row),",
+				"     mapColumn(",
+				"          Fitness_Certificate_Expiry = root.row.Fitness_Certificate_Expiry,",
+				"          Fuel_Type = root.row.Fuel_Type,",
+				"          GPS_Enabled = root.row.GPS_Enabled,",
+				"          Insurance_Expiry_Date = root.row.Insurance_Expiry_Date,",
+				"          Registration_Date = root.row.Registration_Date,",
+				"          capacity = root.row.capacity,",
+				"          color = root.row.color,",
+				"          driver_id = root.row.driver_id,",
+				"          model = root.row.model,",
+				"          vehicle_id = root.row.vehicle_id,",
+				"          vehicle_num = root.row.vehicle_num,",
+				"          vehicle_type = root.row.vehicle_type",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> Vehicleflatten",
+				"Vehicleflatten derive(vehicle_age_years = round(monthsBetween(currentDate(),Registration_Date)/12,2),",
+				"          insurance_status = iif(Insurance_Expiry_Date<currentDate(),'Expired', 'Active'),",
+				"          insurance_days_remaining = iif(\r",
+				"    Insurance_Expiry_Date < currentDate(),\r",
+				"    0,\r",
+				"    minus(Insurance_Expiry_Date, currentDate())\r",
+				"),",
+				"          fitness_status = iif(\r",
+				"    Fitness_Certificate_Expiry < currentDate(),\r",
+				"    'Expired',\r",
+				"    'Valid'\r",
+				")) ~> derivedColumn1",
+				"derivedColumn1 derive(vehicle_age_group = iif(\r",
+				"    vehicle_age_years < 3,\r",
+				"    'New',\r",
+				"    iif(\r",
+				"        vehicle_age_years < 7,\r",
+				"        'Mid-Age',\r",
+				"        'Old'\r",
+				"    )\r",
+				")) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:'Vechicle_S.csv',",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
