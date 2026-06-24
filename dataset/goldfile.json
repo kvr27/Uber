@@ -1,0 +1,23 @@
+{
+	"name": "goldfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADF2ADLSgoldfile_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Uber_G",
+				"fileSystem": "golddata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
